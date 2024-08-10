@@ -58,4 +58,4 @@ To run RepoGraph with SWE-agent, use command:
 bash run_repograph_sweagent.sh
 ```
 
-We are working prepreints for details in RepoGraph and a more comprehensive/easy integration with exsiting models. Stay tuned!!
+We are working on prepreints for details in RepoGraph and a more comprehensive/easy integration with exsiting models. Stay tuned!!

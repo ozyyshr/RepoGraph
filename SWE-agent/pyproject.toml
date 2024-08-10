@@ -1,0 +1,137 @@
+# Guide (user-friendly):
+# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+# Specification (technical, formal):
+# https://packaging.python.org/en/latest/specifications/pyproject-toml/
+
+
+# Choosing a build backend:
+[build-system]
+requires = ["setuptools"]  # REQUIRED if [build-system] table is used
+build-backend = "setuptools.build_meta"  # If not defined, then legacy behavior can happen.
+
+
+[project]
+name = "sweagent"
+dynamic = ["version", "dependencies"]
+description = "The official SWE-agent package - an open source Agent Computer Interface for running language models as software engineers."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+keywords = ["nlp", "agents", "code"]
+authors = [
+  {name = "Carlos E. Jimenez", email = "carlosej@princeton.edu" },
+  {name = "John Yang", email = "byjohnyang@gmail.com" }
+]
+
+# Classifiers help users find your project by categorizing it.
+classifiers = [
+  # How mature is this project? Common values are
+  #   3 - Alpha, 4 - Beta, 5 - Production/Stable
+  "Operating System :: OS Independent",
+  # Indicate who your project is intended for
+  "Intended Audience :: Developers",
+  # Pick your license as you wish
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3 :: Only",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "sweagent.__version__"}
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+where = ["."]
+namespaces = false
+
+[project.urls]
+"Homepage" = "https://swe-agent.com"
+"Bug Reports" = "http://github.com/princeton-nlp/SWE-agent/issues"
+"Documentation" = "https://github.com/princeton-nlp/SWE-agent"
+"Source" = "http://github.com/princeton-nlp/SWE-agent"
+
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+testpaths = [
+    "tests"
+]
+xfail_strict = true
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.8
+target-version = "py38"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["F821", "F822", "E999", "E902", "F401", "F841"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[tool.typos.default.extend-identifiers]
+# *sigh* this just isn't worth the cost of fixing
+ACI = "ACI"
+
+[tool.typos.default.extend-words]
+# Don't correct the surname "Teh"
+aci = "aci"
