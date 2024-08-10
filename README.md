@@ -2,15 +2,13 @@
 
 ## 📜 Overview
 
-RepoGraph 
-
 We introduce RepoGraph, an effective plug-in repo-level module that offers the desired context and substantially boosts the LLMs' AI software engineering capability.
 
 ## 🆕 News
 
 We released the first version RepoGraph and its integration with [SWE-bench](https://www.swebench.com/) methods!
 
-## Code Setup
+## 🤖 Code Setup
 
 ### Foder and files
 
