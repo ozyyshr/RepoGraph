@@ -511,7 +511,7 @@ def repair(args):
         # Note that we assume there's no feedback, and we always use the same prompt in each turn.
         file_instruction = repair_relevant_file_instruction
 
-        if args.cot and args.code_graph and args.diff_format:
+        if args.cot and args.repo_graph and args.diff_format:
             code_graph_context = construct_code_graph_context(
                 loc["found_edit_locs"],
                 code_graph,
@@ -875,7 +875,7 @@ def main():
     parser.add_argument("--cot", action="store_true")
     parser.add_argument("--fine_grain_loc_only", action="store_true")
     parser.add_argument("--diff_format", action="store_true")
-    parser.add_argument("--code_graph", action="store_true")
+    parser.add_argument("--repo_graph", action="store_true")
     parser.add_argument("--skip_greedy", action="store_true")
     parser.add_argument("--sticky_scroll", action="store_true")
     parser.add_argument(

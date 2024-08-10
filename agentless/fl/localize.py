@@ -15,7 +15,7 @@ from agentless.util.preprocess_data import (
     show_project_structure,
 )
 from agentless.util.utils import load_json, load_jsonl
-from .get_repo_structure.get_repo_structure import (
+from agentless.get_repo_structure.get_repo_structure import (
     clone_repo,
     get_project_structure_from_scratch,
 )
@@ -207,7 +207,7 @@ def localize(args):
 
         if args.fine_grain_line_level:
             # Only supports the following args for now
-            if args.code_graph:
+            if args.repo_graph:
                 code_graph_context = construct_code_graph_context(found_related_locs, code_graph, graph_tags, structure)
             else:
                 code_graph_context = None
@@ -231,7 +231,7 @@ def localize(args):
                 coarse_found_locs,
                 context_window=args.context_window,
                 add_space=args.add_space,
-                code_graph=args.code_graph,
+                code_graph=args.repo_graph,
                 code_graph_context=code_graph_context,
                 no_line_number=args.no_line_number,
                 sticky_scroll=args.sticky_scroll,
@@ -350,7 +350,7 @@ def main():
     parser.add_argument("--merge", action="store_true")
     parser.add_argument("--add_space", action="store_true")
     parser.add_argument("--no_line_number", action="store_true")
-    parser.add_argument("--code_graph", action="store_true")
+    parser.add_argument("--repo_graph", action="store_true")
     parser.add_argument("--sticky_scroll", action="store_true")
     parser.add_argument("--context_window", type=int, default=10)
     parser.add_argument("--target_id", type=str)
