@@ -1,6 +1,7 @@
 # This file is adapted from the following sources:
 # RepoMap: https://github.com/paul-gauthier/aider/blob/main/aider/repomap.py
 # Agentless: https://github.com/OpenAutoCoder/Agentless/blob/main/get_repo_structure/get_repo_structure.py
+# grep-ast: https://github.com/paul-gauthier/grep-ast
 
 import colorsys
 import os
