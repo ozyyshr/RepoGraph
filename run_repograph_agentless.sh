@@ -1,4 +1,4 @@
-python agentless/fl/localize.py \
+PYTHONPATH=".:agentless/" python agentless/fl/localize.py \
     --file_level \
     --related_level \
     --fine_grain_line_level \
@@ -8,7 +8,7 @@ python agentless/fl/localize.py \
     --context_window=10 \
     --repo_graph
 
-python agentless/repair/repair.py \
+PYTHONPATH=".:agentless/" python agentless/repair/repair.py \
     --loc_file=results/location/loc_outputs_codegraph.jsonl \
     --output_folder=results/repair \
     --loc_interval \
@@ -18,9 +18,9 @@ python agentless/repair/repair.py \
     --cot \
     --diff_format \
     --gen_and_process \
-    --repo_graph \
+    --repo_graph
 
-python agentless/repair/rerank.py \
+PYTHONPATH=".:agentless/" python agentless/repair/rerank.py \
     --patch_folder=results/repair \
     --num_samples=10 \
     --deduplicate \
