@@ -30,6 +30,22 @@ This will produce two files, `tags_{instance_id}.jsonl` stores the line-level in
 
 ## Integration with models on SWE-bench
 
+RepoGraph integration requires a Python environment (3.10+). To create a new conda environment and install the required packages, run:
+
+```bash
+conda create -n repograph python=3.10
+conda activate repograph
+pip install -r requirements.txt
+# Optional, only proceed if you need to run SWE-agent
+pip install -r SWE-agent/requirements.txt
+```
+
+Before running any experiments, export your OPENAI_API_KEY:
+
+```bash
+export OPENAI_API_KEY=<your_openai_api_key>
+```
+
 ### Procedural framework
 
 For a procedural framework, RepoGraph could be integrated into every step of the pipeline. Refer to `--repo_graph` hyperparameter for controllability in different stages.

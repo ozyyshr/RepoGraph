@@ -3,3 +3,8 @@ tree-sitter-languages==1.10.2
 grep-ast==0.3.2
 networkx==3.2.1
 pygments==2.18.0
+tqdm
+datasets
+openai==1.42.0
+tiktoken==0.7.0
+libcst==1.4.0
