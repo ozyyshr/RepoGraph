@@ -16,7 +16,7 @@ We released the first version RepoGraph and its integration with [SWE-bench](htt
 
 `agentless` and `SWE-agent` incorporates the integrated version of RepoGraph with the two methods.
 
-Currently this version may take a little long time to run for a repo. We provide a cached version for all repos in SWE-bench, download it [here](https://drive.google.com/file/d/1VXflI_85p3iboI8e22N34zogu6nwT2z7/view?usp=sharing) and put it under `repo_structures`.
+Currently this version may take a little long time to run for a repo. We provide a cached version for all repos in SWE-bench, download it [here](https://drive.google.com/file/d/1-0d-OgGoOf3i54bWcf8H0egjQyTSZ8dG/view?usp=sharing) and put it under `repo_structures`.
 
 ### How to run?
 
@@ -29,22 +29,6 @@ python ./repograph/construct_graph.py <dir_to_repo>
 This will produce two files, `tags_{instance_id}.jsonl` stores the line-level information and `{instance_id}.pkl` is the graph constructed using networkx.
 
 ## Integration with models on SWE-bench
-
-RepoGraph integration requires a Python environment (3.10+). To create a new conda environment and install the required packages, run:
-
-```bash
-conda create -n repograph python=3.10
-conda activate repograph
-pip install -r requirements.txt
-# Optional, only proceed if you need to run SWE-agent
-pip install -r SWE-agent/requirements.txt
-```
-
-Before running any experiments, export your OPENAI_API_KEY:
-
-```bash
-export OPENAI_API_KEY=<your_openai_api_key>
-```
 
 ### Procedural framework
 
