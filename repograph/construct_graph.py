@@ -352,10 +352,15 @@ class CodeGraph:
                 if kind == 'def':
                     # func_block = self.get_func_block(cur_cdl, code)
                     # cur_cdl =func_block
-                    cur_cdl = '\n'.join(structure_all_funcs[tag_name]['text'])
-                    line_nums = [structure_all_funcs[tag_name]['start_line'], structure_all_funcs[tag_name]['end_line']]
+                    if tag_name in structure_all_funcs:
+                        cur_cdl = '\n'.join(structure_all_funcs[tag_name]['text'])
+                        line_nums = [structure_all_funcs[tag_name]['start_line'], structure_all_funcs[tag_name]['end_line']]
+                    else:
+                        cur_cdl = "Function definition not found in structure"
+                        line_nums = [node.start_point[0], node.end_point[0]]
                 else:
                     line_nums = [node.start_point[0], node.end_point[0]]
+                    cur_cdl = "Function reference"
 
                 result = Tag(
                     rel_fname=rel_fname,
