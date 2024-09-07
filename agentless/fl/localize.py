@@ -105,12 +105,8 @@ def localize(args):
 
     if args.start_file:
         start_file_locs = load_jsonl(args.start_file)
-    count = 0
-    for bug in swe_bench_data:
-        if count <= 54:
-            count += 1
-            continue
 
+    for bug in swe_bench_data:
         if args.target_id is not None:
             if args.target_id != bug["instance_id"]:
                 continue
@@ -262,7 +258,6 @@ def localize(args):
                 )
                 + "\n"
             )
-        count += 1
 
 
 def merge(args):
