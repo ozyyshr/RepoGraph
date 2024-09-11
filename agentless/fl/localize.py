@@ -17,87 +17,12 @@ from agentless.util.preprocess_data import (
 from agentless.util.utils import load_json, load_jsonl
 from agentless.get_repo_structure.get_repo_structure import (
     clone_repo,
-    get_project_structure_from_scratch,
+    get_project_structure_from_scratch, construct_code_graph_context,
 )
 
 # PROJECT_FILE_LOC = os.environ.get("PROJECT_FILE_LOC", None)
 PROJECT_FILE_LOC = "./repo_structures"
 
-def retrieve_graph(code_graph, graph_tags, search_term, structure, max_tags=100):
-    one_hop_tags = []
-    tags = []
-    for tag in graph_tags:
-        if tag['name'] == search_term and tag['kind'] == 'ref':
-            tags.append(tag)
-        if len(tags) >= max_tags:
-            break
-    # for tag in tags:
-    for i, tag in enumerate(tags):
-        # if i % 3 == 0:
-        print(f"Retrieving graph for {i}/{len(tags)}")
-        # find corresponding calling function/class
-        path = tag['rel_fname'].split('/')
-        s = deepcopy(structure)   # stuck here
-        for p in path:
-            s = s[p]
-        for txt in s['functions']:
-            if tag['line'] >= txt['start_line'] and tag['line'] <= txt['end_line']:
-                one_hop_tags.append((txt, tag['rel_fname']))  
-        for txt in s['classes']:
-            for func in txt['methods']:
-                if tag['line'] >= func['start_line'] and tag['line'] <= func['end_line']:
-                    func['text'].insert(0, txt['text'][0])
-                    one_hop_tags.append((func, tag['rel_fname'])) 
-    return one_hop_tags
-
-def construct_code_graph_context(found_related_locs, code_graph, graph_tags, structure):
-    graph_context = ""
-
-    graph_item_format = """
-### Dependencies for {func}
-{dependencies}
-"""
-    tag_format = """
-location: {fname} lines {start_line} - {end_line}
-name: {name}
-contents: 
-{contents}
-
-"""
-    # retrieve the code graph for dependent functions and classes
-    for item in found_related_locs:
-        code_graph_context = ""
-        item = item[0].splitlines()
-        for loc in tqdm(item):
-            if loc.startswith("class: ") and "." not in loc:
-                loc = loc[len("class: ") :].strip()
-                tags = retrieve_graph(code_graph, graph_tags, loc, structure)
-                for t, fname in tags:
-                    code_graph_context += tag_format.format(
-                        **t,
-                        fname=fname,
-                        contents="\n".join(t['text'])
-                    )
-            elif loc.startswith("function: ") and "." not in loc:
-                loc = loc[len("function: ") :].strip()
-                tags = retrieve_graph(code_graph, graph_tags, loc, structure)
-                for t, fname in tags:
-                    code_graph_context += tag_format.format(
-                        **t,
-                        fname=fname,
-                        contents="\n".join(t['text'])
-                    )
-            elif "." in loc:
-                loc = loc.split(".")[-1].strip()
-                tags = retrieve_graph(code_graph, graph_tags, loc, structure)
-                for t, fname in tags:
-                    code_graph_context += tag_format.format(
-                        **t,
-                        fname=fname,
-                        contents="\n".join(t['text'])
-                    )
-            graph_context += graph_item_format.format(func=loc, dependencies=code_graph_context)
-    return graph_context
 
 def localize(args):
 
@@ -105,12 +30,8 @@ def localize(args):
 
     if args.start_file:
         start_file_locs = load_jsonl(args.start_file)
-    count = 0
-    for bug in swe_bench_data:
-        if count <= 54:
-            count += 1
-            continue
 
+    for bug in swe_bench_data:
         if args.target_id is not None:
             if args.target_id != bug["instance_id"]:
                 continue
@@ -262,7 +183,6 @@ def localize(args):
                 )
                 + "\n"
             )
-        count += 1
 
 
 def merge(args):
