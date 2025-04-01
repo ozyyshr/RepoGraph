@@ -96,20 +96,20 @@ class CodeGraph:
         
         G = nx.MultiDiGraph()
         for tag in tags:
-            G.add_node(tag['name'], category=tag['category'], info=tag['info'], fname=tag['fname'], line=tag['line'], kind=tag['kind'])
+            G.add_node(tag.name, category=tag.category, info=tag.info, fname=tag.fname, line=tag.line, kind=tag.kind)
 
         for tag in tags:
-            if tag['category'] == 'class':
-                class_funcs = tag['info'].split('\t')
+            if tag.category == 'class':
+                class_funcs = tag.info.split('\t')
                 for f in class_funcs:
-                    G.add_edge(tag['name'], f.strip())
+                    G.add_edge(tag.name, f.strip())
 
-        tags_ref = [tag for tag in tags if tag['kind'] == 'ref']
-        tags_def = [tag for tag in tags if tag['kind'] == 'def']
+        tags_ref = [tag for tag in tags if tag.kind == 'ref']
+        tags_def = [tag for tag in tags if tag.kind == 'def']
         for tag in tags_ref:
             for tag_def in tags_def:
-                if tag['name'] == tag_def['name']:
-                    G.add_edge(tag['name'], tag_def['name'])
+                if tag.name == tag_def.name:
+                    G.add_edge(tag.name, tag_def.name)
         return G
 
     def get_rel_fname(self, fname):
@@ -328,24 +328,32 @@ class CodeGraph:
                 continue
 
             if category == 'class':
-                # try:
-                #     class_functions = self.get_class_functions(tree_ast, tag_name)
-                # except:
-                #     class_functions = "None"
-                class_functions = [item['name'] for item in structure_classes[tag_name]['methods']]
-                if kind == 'def':
-                    line_nums = [structure_classes[tag_name]['start_line'], structure_classes[tag_name]['end_line']]
+                if tag_name in structure_classes:
+                    class_functions = [item['name'] for item in structure_classes[tag_name]['methods']]
+                    if kind == 'def':
+                        line_nums = [structure_classes[tag_name]['start_line'], structure_classes[tag_name]['end_line']]
+                    else:
+                        line_nums = [node.start_point[0], node.end_point[0]]
+                    result = Tag(
+                        rel_fname=rel_fname,
+                        fname=fname,
+                        name=tag_name,
+                        kind=kind,
+                        category=category,
+                        info='\n'.join(class_functions), # list unhashable, use string instead
+                        line=line_nums,
+                    )
                 else:
-                    line_nums = [node.start_point[0], node.end_point[0]]
-                result = Tag(
-                    rel_fname=rel_fname,
-                    fname=fname,
-                    name=tag_name,
-                    kind=kind,
-                    category=category,
-                    info='\n'.join(class_functions), # list unhashable, use string instead
-                    line=line_nums,
-                )
+                    # If the class is not in structure_classes, we'll create a basic Tag
+                    result = Tag(
+                        rel_fname=rel_fname,
+                        fname=fname,
+                        name=tag_name,
+                        kind=kind,
+                        category=category,
+                        info="Class not found in structure",
+                        line=[node.start_point[0], node.end_point[0]],
+                    )
 
             elif category == 'function':
 
