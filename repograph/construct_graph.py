@@ -328,24 +328,32 @@ class CodeGraph:
                 continue
 
             if category == 'class':
-                # try:
-                #     class_functions = self.get_class_functions(tree_ast, tag_name)
-                # except:
-                #     class_functions = "None"
-                class_functions = [item['name'] for item in structure_classes[tag_name]['methods']]
-                if kind == 'def':
-                    line_nums = [structure_classes[tag_name]['start_line'], structure_classes[tag_name]['end_line']]
+                if tag_name in structure_classes:
+                    class_functions = [item['name'] for item in structure_classes[tag_name]['methods']]
+                    if kind == 'def':
+                        line_nums = [structure_classes[tag_name]['start_line'], structure_classes[tag_name]['end_line']]
+                    else:
+                        line_nums = [node.start_point[0], node.end_point[0]]
+                    result = Tag(
+                        rel_fname=rel_fname,
+                        fname=fname,
+                        name=tag_name,
+                        kind=kind,
+                        category=category,
+                        info='\n'.join(class_functions), # list unhashable, use string instead
+                        line=line_nums,
+                    )
                 else:
-                    line_nums = [node.start_point[0], node.end_point[0]]
-                result = Tag(
-                    rel_fname=rel_fname,
-                    fname=fname,
-                    name=tag_name,
-                    kind=kind,
-                    category=category,
-                    info='\n'.join(class_functions), # list unhashable, use string instead
-                    line=line_nums,
-                )
+                    # If the class is not in structure_classes, we'll create a basic Tag
+                    result = Tag(
+                        rel_fname=rel_fname,
+                        fname=fname,
+                        name=tag_name,
+                        kind=kind,
+                        category=category,
+                        info="Class not found in structure",
+                        line=[node.start_point[0], node.end_point[0]],
+                    )
 
             elif category == 'function':
 
