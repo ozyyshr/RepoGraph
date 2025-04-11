@@ -4,6 +4,8 @@ import json
 import os
 import subprocess
 import uuid
+
+from copy import deepcopy
 from datasets import load_dataset
 import pandas as pd
 from tqdm import tqdm
@@ -234,6 +236,84 @@ def create_structure(directory_path):
                 curr_struct[file_name] = {}
 
     return structure
+
+
+def retrieve_graph(code_graph, graph_tags, search_term, structure, max_tags=100):
+    one_hop_tags = []
+    tags = []
+    for tag in graph_tags:
+        if tag['name'] == search_term and tag['kind'] == 'ref':
+            tags.append(tag)
+        if len(tags) >= max_tags:
+            break
+    # for tag in tags:
+    for i, tag in enumerate(tags):
+        # if i % 3 == 0:
+        print(f"Retrieving graph for {i}/{len(tags)}")
+        # find corresponding calling function/class
+        path = tag['rel_fname'].split('/')
+        s = deepcopy(structure)   # stuck here
+        for p in path:
+            s = s[p]
+        for txt in s['functions']:
+            if tag['line'] >= txt['start_line'] and tag['line'] <= txt['end_line']:
+                one_hop_tags.append((txt, tag['rel_fname']))
+        for txt in s['classes']:
+            for func in txt['methods']:
+                if tag['line'] >= func['start_line'] and tag['line'] <= func['end_line']:
+                    func['text'].insert(0, txt['text'][0])
+                    one_hop_tags.append((func, tag['rel_fname']))
+    return one_hop_tags
+
+def construct_code_graph_context(found_related_locs, code_graph, graph_tags, structure):
+    graph_context = ""
+
+    graph_item_format = """
+### Dependencies for {func}
+{dependencies}
+"""
+    tag_format = """
+location: {fname} lines {start_line} - {end_line}
+name: {name}
+contents: 
+{contents}
+
+"""
+    # retrieve the code graph for dependent functions and classes
+    for item in found_related_locs:
+        code_graph_context = ""
+        item = item[0].splitlines()
+        for loc in tqdm(item):
+            if loc.startswith("class: ") and "." not in loc:
+                loc = loc[len("class: ") :].strip()
+                tags = retrieve_graph(code_graph, graph_tags, loc, structure)
+                for t, fname in tags:
+                    code_graph_context += tag_format.format(
+                        **t,
+                        fname=fname,
+                        contents="\n".join(t['text'])
+                    )
+            elif loc.startswith("function: ") and "." not in loc:
+                loc = loc[len("function: ") :].strip()
+                tags = retrieve_graph(code_graph, graph_tags, loc, structure)
+                for t, fname in tags:
+                    code_graph_context += tag_format.format(
+                        **t,
+                        fname=fname,
+                        contents="\n".join(t['text'])
+                    )
+            elif "." in loc:
+                loc = loc.split(".")[-1].strip()
+                tags = retrieve_graph(code_graph, graph_tags, loc, structure)
+                for t, fname in tags:
+                    code_graph_context += tag_format.format(
+                        **t,
+                        fname=fname,
+                        contents="\n".join(t['text'])
+                    )
+            graph_context += graph_item_format.format(func=loc, dependencies=code_graph_context)
+    return graph_context
+
 
 if __name__ == '__main__':
 

@@ -10,6 +10,7 @@ import pickle
 from datasets import load_dataset
 from tqdm import tqdm
 
+from agentless.get_repo_structure.get_repo_structure import construct_code_graph_context
 from agentless.util.api_requests import (
     create_chatgpt_config,
     num_tokens_from_messages,
@@ -191,77 +192,6 @@ from flask import Flask
 Please note that the *SEARCH/REPLACE* edit REQUIRES PROPER INDENTATION. If you would like to add the line '        print(x)', you must fully write that out, with all those spaces before the code!
 Wrap the *SEARCH/REPLACE* edit in blocks ```python...```.
 """
-
-def retrieve_graph(code_graph, graph_tags, search_term, structure):
-    one_hop_tags = []
-    tags = []
-    for tag in graph_tags:
-        if tag['name'] == search_term and tag['kind'] == 'ref':
-            tags.append(tag)
-    for tag in tags:
-        # find corresponding calling function/class
-        path = tag['rel_fname'].split('/')
-        s = deepcopy(structure)
-        for p in path:
-            s = s[p]
-        for txt in s['functions']:
-            if tag['line'] >= txt['start_line'] and tag['line'] <= txt['end_line']:
-                one_hop_tags.append((txt, tag['rel_fname']))  
-        for txt in s['classes']:
-            for func in txt['methods']:
-                if tag['line'] >= func['start_line'] and tag['line'] <= func['end_line']:
-                    func['text'].insert(0, txt['text'][0])
-                    one_hop_tags.append((func, tag['rel_fname'])) 
-    return one_hop_tags
-
-def construct_code_graph_context(found_related_locs, code_graph, graph_tags, structure):
-    graph_context = ""
-
-    graph_item_format = """
-### Dependencies for {func}
-{dependencies}
-"""
-    tag_format = """
-location: {fname} lines {start_line} - {end_line}
-name: {name}
-contents: 
-{contents}
-
-"""
-    # retrieve the code graph for dependent functions and classes
-    for item in found_related_locs:
-        code_graph_context = ""
-        item = item[0].splitlines()
-        for loc in item:
-            if loc.startswith("class: ") and "." not in loc:
-                loc = loc[len("class: ") :].strip()
-                tags = retrieve_graph(code_graph, graph_tags, loc, structure)
-                for t, fname in tags:
-                    code_graph_context += tag_format.format(
-                        **t,
-                        fname=fname,
-                        contents="\n".join(t['text'])
-                    )
-            elif loc.startswith("function: ") and "." not in loc:
-                loc = loc[len("function: ") :].strip()
-                tags = retrieve_graph(code_graph, graph_tags, loc, structure)
-                for t, fname in tags:
-                    code_graph_context += tag_format.format(
-                        **t,
-                        fname=fname,
-                        contents="\n".join(t['text'])
-                    )
-            elif "." in loc:
-                loc = loc.split(".")[-1].strip()
-                tags = retrieve_graph(code_graph, graph_tags, loc, structure)
-                for t, fname in tags:
-                    code_graph_context += tag_format.format(
-                        **t,
-                        fname=fname,
-                        contents="\n".join(t['text'])
-                    )
-            graph_context += graph_item_format.format(func=loc, dependencies=code_graph_context)
-    return graph_context
 
 
 
