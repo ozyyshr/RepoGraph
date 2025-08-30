@@ -33,18 +33,18 @@ Tag = namedtuple("Tag", "rel_fname fname line name kind category info".split())
 
 
 class CodeGraph:
-
+    
     warned_files = set()
 
     def __init__(
-        self,
-        map_tokens=1024,
-        root=None,
-        main_model=None,
-        io=None,
-        repo_content_prefix=None,
-        verbose=False,
-        max_context_window=None,
+            self,
+            map_tokens=1024,
+            root=None,
+            main_model=None,
+            io=None,
+            repo_content_prefix=None,
+            verbose=False,
+            max_context_window=None,
     ):
         self.io = io
         self.verbose = verbose
@@ -93,23 +93,23 @@ class CodeGraph:
             return
 
     def tag_to_graph(self, tags):
-        
+
         G = nx.MultiDiGraph()
         for tag in tags:
-            G.add_node(tag['name'], category=tag['category'], info=tag['info'], fname=tag['fname'], line=tag['line'], kind=tag['kind'])
+            G.add_node(tag.name, category=tag.category, info=tag.info, fname=tag.fname, line=tag.line, kind=tag.kind)
 
         for tag in tags:
-            if tag['category'] == 'class':
-                class_funcs = tag['info'].split('\t')
+            if tag.category == 'class':
+                class_funcs = tag.info.split('\t')
                 for f in class_funcs:
-                    G.add_edge(tag['name'], f.strip())
+                    G.add_edge(tag.name, f.strip())
 
-        tags_ref = [tag for tag in tags if tag['kind'] == 'ref']
-        tags_def = [tag for tag in tags if tag['kind'] == 'def']
+        tags_ref = [tag for tag in tags if tag.kind == 'ref']
+        tags_def = [tag for tag in tags if tag.kind == 'def']
         for tag in tags_ref:
             for tag_def in tags_def:
-                if tag['name'] == tag_def['name']:
-                    G.add_edge(tag['name'], tag_def['name'])
+                if tag.name == tag_def.name:
+                    G.add_edge(tag.name, tag_def.name)
         return G
 
     def get_rel_fname(self, fname):
@@ -158,7 +158,7 @@ class CodeGraph:
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
                 # identify the import statement
-                import_statement = codelines[node.lineno-1]
+                import_statement = codelines[node.lineno - 1]
                 for alias in node.names:
                     import_name = alias.name.split('.')[0]
                     if import_name in fname:
@@ -172,11 +172,12 @@ class CodeGraph:
                             continue
                         std_libs.append(alias.name)
                         eval_name = alias.name if alias.asname is None else alias.asname
-                        std_funcs.extend([name for name, member in inspect.getmembers(eval(eval_name)) if callable(member)])
+                        std_funcs.extend(
+                            [name for name, member in inspect.getmembers(eval(eval_name)) if callable(member)])
 
             if isinstance(node, ast.ImportFrom):
                 # execute the import statement
-                import_statement = codelines[node.lineno-1]
+                import_statement = codelines[node.lineno - 1]
                 if node.module is None:
                     continue
                 module_name = node.module.split('.')[0]
@@ -185,11 +186,11 @@ class CodeGraph:
                 else:
                     # handle imports with parentheses
                     if "(" in import_statement:
-                        for ln in range(node.lineno-1, len(codelines)):
+                        for ln in range(node.lineno - 1, len(codelines)):
                             if ")" in codelines[ln]:
                                 code_num = ln
                                 break
-                        import_statement = '\n'.join(codelines[node.lineno-1:code_num+1])
+                        import_statement = '\n'.join(codelines[node.lineno - 1:code_num + 1])
                     import_statement = import_statement.strip()
                     try:
                         exec(import_statement)
@@ -200,9 +201,9 @@ class CodeGraph:
                         eval_name = alias.name if alias.asname is None else alias.asname
                         if eval_name == "*":
                             continue
-                        std_funcs.extend([name for name, member in inspect.getmembers(eval(eval_name)) if callable(member)])
+                        std_funcs.extend(
+                            [name for name, member in inspect.getmembers(eval(eval_name)) if callable(member)])
         return std_funcs, std_libs
-                    
 
     def get_tags(self, fname, rel_fname):
         # Check if the file is in the cache and if the modification time has not changed
@@ -215,9 +216,11 @@ class CodeGraph:
 
     def get_tags_raw(self, fname, rel_fname):
         ref_fname_lst = rel_fname.split('/')
-        s = deepcopy(self.structure)
+        sets = deepcopy(self.structure)
+
+        sets = sets[next(iter(sets))]
         for fname_part in ref_fname_lst:
-            s = s[fname_part]
+            s = sets[fname_part]
         structure_classes = {item['name']: item for item in s['classes']}
         structure_functions = {item['name']: item for item in s['functions']}
         structure_class_methods = dict()
@@ -259,7 +262,7 @@ class CodeGraph:
 
         with open(str(fname), "r", encoding='utf-8') as f:
             code = f.read()
-        with open(str(fname), "r", encoding='utf-8') as f:    
+        with open(str(fname), "r", encoding='utf-8') as f:
             codelines = f.readlines()
 
         # hard-coded edge cases
@@ -291,12 +294,12 @@ class CodeGraph:
             std_funcs, std_libs = self.std_proj_funcs(code, fname)
         except:
             std_funcs, std_libs = [], []
-        
+
         # functions from builtins
         builtins_funs = [name for name in dir(builtins)]
         builtins_funs += dir(list)
         builtins_funs += dir(dict)
-        builtins_funs += dir(set)  
+        builtins_funs += dir(set)
         builtins_funs += dir(str)
         builtins_funs += dir(tuple)
 
@@ -318,7 +321,7 @@ class CodeGraph:
             cur_cdl = codelines[node.start_point[0]]
             category = 'class' if 'class ' in cur_cdl else 'function'
             tag_name = node.text.decode("utf-8")
-            
+
             #  we only want to consider project-dependent functions
             if tag_name in std_funcs:
                 continue
@@ -343,7 +346,7 @@ class CodeGraph:
                     name=tag_name,
                     kind=kind,
                     category=category,
-                    info='\n'.join(class_functions), # list unhashable, use string instead
+                    info='\n'.join(class_functions),  # list unhashable, use string instead
                     line=line_nums,
                 )
 
@@ -401,7 +404,7 @@ class CodeGraph:
         # defines = defaultdict(set)
         # references = defaultdict(list)
         # definitions = defaultdict(set)
-        
+
         tags_of_files = list()
 
         personalization = dict()
@@ -437,7 +440,7 @@ class CodeGraph:
 
             if fname in mentioned_fnames:
                 personalization[rel_fname] = personalize
-            
+
             tags = list(self.get_tags(fname, rel_fname))
 
             tags_of_files.extend(tags)
@@ -446,7 +449,6 @@ class CodeGraph:
                 continue
 
         return tags_of_files
-    
 
     def render_tree(self, abs_fname, rel_fname, lois):
         key = (rel_fname, tuple(sorted(lois)))
@@ -520,7 +522,6 @@ class CodeGraph:
 
         return output
 
-
     def find_src_files(self, directory):
         if not os.path.isdir(directory):
             return [directory]
@@ -530,7 +531,6 @@ class CodeGraph:
             for file in files:
                 src_files.append(os.path.join(root, file))
         return src_files
-    
 
     def find_files(self, dir):
         chat_fnames = []
@@ -540,7 +540,7 @@ class CodeGraph:
                 chat_fnames += self.find_src_files(fname)
             else:
                 chat_fnames.append(fname)
-        
+
         chat_fnames_new = []
         for item in chat_fnames:
             # filter out non-python files
@@ -548,9 +548,9 @@ class CodeGraph:
                 continue
             else:
                 chat_fnames_new.append(item)
-    
+
         return chat_fnames_new
-    
+
 
 def get_random_color():
     hue = random.random()
@@ -576,7 +576,7 @@ if __name__ == "__main__":
 
     with open(f'{os.getcwd()}/graph.pkl', 'wb') as f:
         pickle.dump(G, f)
-    
+
     for tag in tags:
         with open(f'{os.getcwd()}/tags.json', 'a+') as f:
             line = json.dumps({
@@ -588,5 +588,5 @@ if __name__ == "__main__":
                 'category': tag.category,
                 'info': tag.info,
             })
-            f.write(line+'\n')
+            f.write(line + '\n')
     print(f"🏅 Successfully cached code graph and node tags in directory ''{os.getcwd()}''")
