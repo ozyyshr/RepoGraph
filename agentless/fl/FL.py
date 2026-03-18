@@ -266,9 +266,24 @@ Return just the locations.
             request_chatgpt_engine,
         )
 
+        structure_text = show_project_structure(self.structure).strip()
+        # Truncate structure to fit within TPM budget (leave ~8K for prompt overhead
+        # + problem statement + output).  Using cl100k tokenizer as approximation.
+        MAX_STRUCTURE_TOKENS = 20000
+        struct_tokens = num_tokens_from_messages(structure_text, "gpt-4o-2024-05-13")
+        if struct_tokens > MAX_STRUCTURE_TOKENS:
+            # Keep only as many lines as fit within the token budget
+            lines = structure_text.splitlines(keepends=True)
+            kept, total = [], 0
+            per_line = struct_tokens / max(len(lines), 1)
+            budget = int(MAX_STRUCTURE_TOKENS / per_line)
+            kept = lines[:budget]
+            structure_text = "".join(kept).rstrip()
+            structure_text += f"\n... (truncated: showing {budget}/{len(lines)} lines)"
+
         message = self.obtain_relevant_files_prompt.format(
             problem_statement=self.problem_statement,
-            structure=show_project_structure(self.structure).strip(),
+            structure=structure_text,
         ).strip()
         print(f"prompting with message:\n{message}")
         print("=" * 80)

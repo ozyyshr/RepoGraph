@@ -1,0 +1,72 @@
+{
+    "matplotlib__matplotlib-23987": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_set_constrained_layout[False-False]"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout1[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout2[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout3[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout4[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout5[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout6[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_identical_subgridspec",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout7",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout8[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout9[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout10[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout11[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout11rat[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout12[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout13[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout14[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout15[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout16[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout17[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout18",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout19",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout20",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout21",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout22",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_constrained_layout23",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_colorbar_location[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_hidden_axes",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_colorbar_align",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_colorbars_no_overlapV[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_colorbars_no_overlapH[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_manually_set_position",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_bboxtight[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_bbox[png]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_align_labels",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_suplabels",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_gridspec_addressing",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_discouraged_api",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_kwargs",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_rect",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_compressed1",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_set_constrained_layout[True-True]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_set_constrained_layout[arg2-True]",
+                    "lib/matplotlib/tests/test_constrainedlayout.py::test_set_constrained_layout[arg3-True]"
+                ],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

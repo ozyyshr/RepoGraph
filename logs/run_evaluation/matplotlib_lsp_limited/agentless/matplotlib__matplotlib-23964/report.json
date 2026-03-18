@@ -1,0 +1,45 @@
+{
+    "matplotlib__matplotlib-23964": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": true,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [
+                    "lib/matplotlib/tests/test_backend_ps.py::test_empty_line"
+                ],
+                "failure": []
+            },
+            "PASS_TO_PASS": {
+                "success": [
+                    "lib/matplotlib/tests/test_backend_ps.py::test_savefig_to_stringio[ps-portrait]",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_savefig_to_stringio[ps-landscape]",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_savefig_to_stringio[ps",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_savefig_to_stringio[eps-portrait]",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_savefig_to_stringio[eps-landscape]",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_savefig_to_stringio[eps",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_patheffects",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_transparency[eps]",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_bbox",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_failing_latex",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_text_clip[eps]",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_d_glyph",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_fonttype[3]",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_fonttype[42]",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_linedash",
+                    "lib/matplotlib/tests/test_backend_ps.py::test_no_duplicate_definition"
+                ],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

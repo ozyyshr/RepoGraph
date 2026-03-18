@@ -1,0 +1,31 @@
+diff --git a/astropy/io/ascii/rst.py b/astropy/io/ascii/rst.py
+index 00bbbaf..1e5eca9 100644
+--- a/astropy/io/ascii/rst.py
++++ b/astropy/io/ascii/rst.py
+@@ -57,10 +57,22 @@ class RST(FixedWidth):
+     data_class = SimpleRSTData
+     header_class = SimpleRSTHeader
+ 
+-    def __init__(self):
++    def __init__(self, header_rows=None):
++        self.header_rows = header_rows
+         super().__init__(delimiter_pad=None, bookend=False)
+ 
+-    def write(self, lines):
+-        lines = super().write(lines)
++    def write(self, table):
++        # Get the lines from the parent class
++        lines = super().write(table)
++        
++        # If header_rows is specified, insert them
++        if self.header_rows:
++            header_lines = []
++            for row in self.header_rows:
++                header_line = ' '.join(str(getattr(col.info, row, '')) for col in table.columns.values())
++                header_lines.append(header_line)
++            lines = header_lines + lines
++        
++        # Add the top and bottom border lines
+         lines = [lines[1]] + lines + [lines[1]]
+-        return lines
++        return lines

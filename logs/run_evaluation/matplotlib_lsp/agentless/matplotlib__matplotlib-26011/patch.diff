@@ -1,0 +1,27 @@
+diff --git a/lib/matplotlib/axis.py b/lib/matplotlib/axis.py
+index e93ff96..9a6096d 100644
+--- a/lib/matplotlib/axis.py
++++ b/lib/matplotlib/axis.py
+@@ -1237,15 +1237,15 @@ class Axis(martist.Artist):
+         if auto is not None:
+             self._set_autoscale_on(bool(auto))
+ 
++        # Call all of the other axes that are shared with this one
++        for other in self._get_shared_axes():
++            if other is not self.axes:
++                other._axis_map[name]._set_lim(
++                    v0, v1, emit=False, auto=auto)
++                if other.figure != self.figure:
++                    other.figure.canvas.draw_idle()
+         if emit:
+             self.axes.callbacks.process(f"{name}lim_changed", self.axes)
+-            # Call all of the other axes that are shared with this one
+-            for other in self._get_shared_axes():
+-                if other is not self.axes:
+-                    other._axis_map[name]._set_lim(
+-                        v0, v1, emit=False, auto=auto)
+-                    if other.figure != self.figure:
+-                        other.figure.canvas.draw_idle()
+ 
+         self.stale = True
+         return v0, v1

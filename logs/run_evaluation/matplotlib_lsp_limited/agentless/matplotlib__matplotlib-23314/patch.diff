@@ -1,0 +1,26 @@
+diff --git a/lib/mpl_toolkits/mplot3d/axes3d.py b/lib/mpl_toolkits/mplot3d/axes3d.py
+index 392f89b..4eb2e4b 100644
+--- a/lib/mpl_toolkits/mplot3d/axes3d.py
++++ b/lib/mpl_toolkits/mplot3d/axes3d.py
+@@ -1236,6 +1236,21 @@ class Axes3D(Axes):
+                              reverse=bool(self.zaxis_inverted())),
+                       auto=None)
+ 
++    def set_visible(self, b):
++        """
++        Set the visibility of the axes.
++        
++        Parameters
++        ----------
++        b : bool
++            Visibility state. If False, the axes will be hidden.
++        """
++        super().set_visible(b)
++        for axis in [self.xaxis, self.yaxis, self.zaxis]:
++            axis.set_visible(b)
++        for spine in self.spines.values():
++            spine.set_visible(b)
++
+     def text(self, x, y, z, s, zdir=None, **kwargs):
+         """
+         Add text to the plot. kwargs will be passed on to Axes.text,

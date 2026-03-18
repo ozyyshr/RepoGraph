@@ -23,6 +23,9 @@ from agentless.get_repo_structure.get_repo_structure import (
 # PROJECT_FILE_LOC = os.environ.get("PROJECT_FILE_LOC", None)
 PROJECT_FILE_LOC = "./repo_structures"
 
+# Default graph directory (overridable via --graph_dir)
+DEFAULT_GRAPH_DIR = "./repo_structures/graph"
+
 def retrieve_graph(code_graph, graph_tags, search_term, structure, max_tags=100):
     one_hop_tags = []
     tags = []
@@ -105,18 +108,21 @@ def localize(args):
 
     if args.start_file:
         start_file_locs = load_jsonl(args.start_file)
-    count = 0
+
+    graph_dir = getattr(args, "graph_dir", DEFAULT_GRAPH_DIR)
+    project_file_loc = getattr(args, "project_file_loc", None) or PROJECT_FILE_LOC
+
     for bug in swe_bench_data:
-        if count <= 54:
-            count += 1
+        # Filter by repo prefix (e.g. "astropy" matches "astropy__astropy-12907")
+        if args.filter_repo and not bug["instance_id"].startswith(args.filter_repo):
             continue
 
         if args.target_id is not None:
             if args.target_id != bug["instance_id"]:
                 continue
 
-        if PROJECT_FILE_LOC is not None:
-            project_file = os.path.join(PROJECT_FILE_LOC, bug["instance_id"] + ".json")
+        if project_file_loc is not None:
+            project_file = os.path.join(project_file_loc, bug["instance_id"] + ".json")
             d = load_json(project_file)
         else:
             # we need to get the project structure directly
@@ -126,10 +132,10 @@ def localize(args):
 
         instance_id = d["instance_id"]
         code_graph = pickle.load(
-            open(f"./repo_structures/graph/{instance_id}.pkl", "rb")
+            open(os.path.join(graph_dir, f"{instance_id}.pkl"), "rb")
         )
         graph_tags = json.load(
-            open(f"./repo_structures/graph/tags_{instance_id}.json", "r")
+            open(os.path.join(graph_dir, f"tags_{instance_id}.json"), "r")
         )
 
         logging.info(f"================ localize {instance_id} ================")
@@ -244,6 +250,20 @@ def localize(args):
                 additional_artifact_loc_edit_location
             ]
 
+            if args.max_edit_locs is not None and found_edit_locs:
+                truncated = []
+                for file_locs in found_edit_locs:
+                    if isinstance(file_locs, list):
+                        truncated_samples = []
+                        for locs_str in file_locs:
+                            lines = [l for l in locs_str.splitlines() if l.strip()]
+                            truncated_samples.append("\n".join(lines[:args.max_edit_locs]))
+                        truncated.append(truncated_samples)
+                    else:
+                        lines = [l for l in str(file_locs).splitlines() if l.strip()]
+                        truncated.append("\n".join(lines[:args.max_edit_locs]))
+                found_edit_locs = truncated
+
         with open(args.output_file, "a") as f:
             f.write(
                 json.dumps(
@@ -262,7 +282,6 @@ def localize(args):
                 )
                 + "\n"
             )
-        count += 1
 
 
 def merge(args):
@@ -355,7 +374,32 @@ def main():
     parser.add_argument("--context_window", type=int, default=10)
     parser.add_argument("--target_id", type=str)
     parser.add_argument(
+        "--filter_repo",
+        type=str,
+        default=None,
+        help="Only process instances whose instance_id starts with this prefix (e.g. 'astropy').",
+    )
+    parser.add_argument(
+        "--graph_dir",
+        type=str,
+        default=DEFAULT_GRAPH_DIR,
+        help="Directory containing {instance_id}.pkl and tags_{instance_id}.json.",
+    )
+    parser.add_argument(
+        "--project_file_loc",
+        type=str,
+        default=None,
+        help="Directory containing {instance_id}.json structure files. Overrides PROJECT_FILE_LOC.",
+    )
+    parser.add_argument(
         "--mock", action="store_true", help="Mock run to compute prompt tokens."
+    )
+    parser.add_argument(
+        "--max_edit_locs",
+        type=int,
+        default=None,
+        help="Maximum number of edit location entries (class:/function:/variable:/line: lines) "
+             "to keep per file. Useful to limit over-localization from graph-augmented runs.",
     )
 
     args = parser.parse_args()
@@ -364,7 +408,7 @@ def main():
 
     args.output_file = os.path.join(args.output_folder, args.output_file)
 
-    assert not os.path.exists(args.output_file), "Output file already exists"
+#    assert not  os.path.exists(args.output_file), "Output file already exists"
 
     assert not (
         args.file_level and args.start_file

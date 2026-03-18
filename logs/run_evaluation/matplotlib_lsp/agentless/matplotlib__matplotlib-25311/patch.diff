@@ -1,0 +1,21 @@
+diff --git a/lib/matplotlib/legend.py b/lib/matplotlib/legend.py
+index a038473..0282966 100644
+--- a/lib/matplotlib/legend.py
++++ b/lib/matplotlib/legend.py
+@@ -73,6 +73,16 @@ class DraggableLegend(DraggableOffsetBox):
+ 
+         super().__init__(legend, legend._legend_box, use_blit=use_blit)
+ 
++    def __getstate__(self):
++        state = self.__dict__.copy()
++        # Remove the canvas from the state
++        state.pop('legend', None)
++        return state
++
++    def __setstate__(self, state):
++        self.__dict__.update(state)
++        self.legend = None  # This will need to be set manually after unpickling
++
+     def finalize_offset(self):
+         if self._update == "loc":
+             self._update_loc(self.get_loc_in_canvas())

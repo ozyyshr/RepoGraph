@@ -1,0 +1,13 @@
+diff --git a/lib/mpl_toolkits/mplot3d/art3d.py b/lib/mpl_toolkits/mplot3d/art3d.py
+index fa869c7..894a628 100644
+--- a/lib/mpl_toolkits/mplot3d/art3d.py
++++ b/lib/mpl_toolkits/mplot3d/art3d.py
+@@ -765,6 +765,8 @@ class Poly3DCollection(PolyCollection):
+         self._facecolor3d = PolyCollection.get_facecolor(self)
+         self._edgecolor3d = PolyCollection.get_edgecolor(self)
+         self._alpha3d = PolyCollection.get_alpha(self)
++        self._facecolors2d = np.empty((0, 4))  # Initialize _facecolors2d
++        self._edgecolors2d = np.empty((0, 4))  # Initialize _edgecolors2d
+         self.stale = True
+ 
+     def set_sort_zpos(self, val):

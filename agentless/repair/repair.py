@@ -402,11 +402,12 @@ def repair(args):
             logging.info(f"skipping {instance_id} since patch already generated")
             continue
 
+        graph_dir = getattr(args, "graph_dir", "./repo_structures/graph")
         code_graph = pickle.load(
-            open(f"./repo_structures/graph/{instance_id}.pkl", "rb")
+            open(os.path.join(graph_dir, f"{instance_id}.pkl"), "rb")
         )
         graph_tags = json.load(
-            open(f"./repo_structures/graph/tags_{instance_id}.json", "r")
+            open(os.path.join(graph_dir, f"tags_{instance_id}.json"), "r")
         )
 
         logging.info(f"================ repairing {instance_id} ================")
@@ -876,6 +877,12 @@ def main():
     parser.add_argument("--fine_grain_loc_only", action="store_true")
     parser.add_argument("--diff_format", action="store_true")
     parser.add_argument("--repo_graph", action="store_true")
+    parser.add_argument(
+        "--graph_dir",
+        type=str,
+        default="./repo_structures/graph",
+        help="Directory containing {instance_id}.pkl and tags_{instance_id}.json.",
+    )
     parser.add_argument("--skip_greedy", action="store_true")
     parser.add_argument("--sticky_scroll", action="store_true")
     parser.add_argument(

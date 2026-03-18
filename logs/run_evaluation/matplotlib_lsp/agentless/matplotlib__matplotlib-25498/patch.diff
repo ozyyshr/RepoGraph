@@ -1,0 +1,12 @@
+diff --git a/lib/matplotlib/colors.py b/lib/matplotlib/colors.py
+index 61200b4..8feae9a 100644
+--- a/lib/matplotlib/colors.py
++++ b/lib/matplotlib/colors.py
+@@ -1350,6 +1350,7 @@ class Normalize:
+ 
+     def inverse(self, value):
+         if not self.scaled():
++            self.vmin, self.vmax = mtransforms.nonsingular(self.vmin, self.vmax, expander=0.1)
+             raise ValueError("Not invertible until both vmin and vmax are set")
+         (vmin,), _ = self.process_value(self.vmin)
+         (vmax,), _ = self.process_value(self.vmax)

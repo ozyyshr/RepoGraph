@@ -1,0 +1,45 @@
+{
+    "matplotlib__matplotlib-24265": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "lib/matplotlib/tests/test_style.py::test_deprecated_seaborn_styles"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [
+                    "lib/matplotlib/tests/test_style.py::test_invalid_rc_warning_includes_filename",
+                    "lib/matplotlib/tests/test_style.py::test_available",
+                    "lib/matplotlib/tests/test_style.py::test_use",
+                    "lib/matplotlib/tests/test_style.py::test_use_url",
+                    "lib/matplotlib/tests/test_style.py::test_single_path",
+                    "lib/matplotlib/tests/test_style.py::test_context",
+                    "lib/matplotlib/tests/test_style.py::test_context_with_dict",
+                    "lib/matplotlib/tests/test_style.py::test_context_with_dict_after_namedstyle",
+                    "lib/matplotlib/tests/test_style.py::test_context_with_dict_before_namedstyle",
+                    "lib/matplotlib/tests/test_style.py::test_context_with_union_of_dict_and_namedstyle",
+                    "lib/matplotlib/tests/test_style.py::test_context_with_badparam",
+                    "lib/matplotlib/tests/test_style.py::test_alias[mpl20]",
+                    "lib/matplotlib/tests/test_style.py::test_alias[mpl15]",
+                    "lib/matplotlib/tests/test_style.py::test_xkcd_no_cm",
+                    "lib/matplotlib/tests/test_style.py::test_xkcd_cm",
+                    "lib/matplotlib/tests/test_style.py::test_up_to_date_blacklist"
+                ],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

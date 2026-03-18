@@ -1,0 +1,66 @@
+diff --git a/lib/matplotlib/offsetbox.py b/lib/matplotlib/offsetbox.py
+index db0cc2e..acd451a 100644
+--- a/lib/matplotlib/offsetbox.py
++++ b/lib/matplotlib/offsetbox.py
+@@ -1499,16 +1499,19 @@ class DraggableBase:
+         if not ref_artist.pickable():
+             ref_artist.set_picker(True)
+         self.got_artist = False
+-        self._use_blit = use_blit and self.canvas.supports_blit
+-        self.cids = [
+-            self.canvas.callbacks._connect_picklable(
+-                'pick_event', self.on_pick),
+-            self.canvas.callbacks._connect_picklable(
+-                'button_release_event', self.on_release),
+-        ]
++        self._use_blit = use_blit and (self.ref_artist.figure is not None and self.ref_artist.figure.canvas.supports_blit)
++        if self.ref_artist.figure is not None:
++            self.cids = [
++                self.ref_artist.figure.canvas.callbacks._connect_picklable(
++                    'pick_event', self.on_pick),
++                self.ref_artist.figure.canvas.callbacks._connect_picklable(
++                    'button_release_event', self.on_release),
++            ]
++        else:
++            self.cids = []
+ 
+     # A property, not an attribute, to maintain picklability.
+-    canvas = property(lambda self: self.ref_artist.figure.canvas)
++    canvas = property(lambda self: self.ref_artist.figure.canvas if self.ref_artist.figure is not None else None)
+ 
+     def on_motion(self, evt):
+         if self._check_still_parented() and self.got_artist:
+@@ -1544,7 +1547,8 @@ class DraggableBase:
+         if self._check_still_parented() and self.got_artist:
+             self.finalize_offset()
+             self.got_artist = False
+-            self.canvas.mpl_disconnect(self._c1)
++            if self.canvas is not None:
++                self.canvas.mpl_disconnect(self._c1)
+ 
+             if self._use_blit:
+                 self.ref_artist.set_animated(False)
+@@ -1558,14 +1562,15 @@ class DraggableBase:
+ 
+     def disconnect(self):
+         """Disconnect the callbacks."""
+-        for cid in self.cids:
+-            self.canvas.mpl_disconnect(cid)
+-        try:
+-            c1 = self._c1
+-        except AttributeError:
+-            pass
+-        else:
+-            self.canvas.mpl_disconnect(c1)
++        if self.canvas is not None:
++            for cid in self.cids:
++                self.canvas.mpl_disconnect(cid)
++            try:
++                c1 = self._c1
++            except AttributeError:
++                pass
++            else:
++                self.canvas.mpl_disconnect(c1)
+ 
+     def save_offset(self):
+         pass

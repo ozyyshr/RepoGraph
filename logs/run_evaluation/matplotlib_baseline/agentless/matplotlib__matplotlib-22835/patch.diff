@@ -1,0 +1,21 @@
+diff --git a/lib/matplotlib/artist.py b/lib/matplotlib/artist.py
+index 2914fa8..07fa609 100644
+--- a/lib/matplotlib/artist.py
++++ b/lib/matplotlib/artist.py
+@@ -1304,9 +1304,13 @@ class Artist:
+             normed = self.norm(data)
+             if np.isfinite(normed):
+                 # Midpoints of neighboring color intervals.
+-                neighbors = self.norm.inverse(
+-                    (int(self.norm(data) * n) + np.array([0, 1])) / n)
+-                delta = abs(neighbors - data).max()
++                try:
++                    neighbors = self.norm.inverse(
++                        (int(self.norm(data) * n) + np.array([0, 1])) / n)
++                    delta = abs(neighbors - data).max()
++                except ValueError:
++                    # Handle the case where the norm is not invertible
++                    delta = np.nan
+                 g_sig_digits = cbook._g_sig_digits(data, delta)
+             else:
+                 g_sig_digits = 3  # Consistent with default below.

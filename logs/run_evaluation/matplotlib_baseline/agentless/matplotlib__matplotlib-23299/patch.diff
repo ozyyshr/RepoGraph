@@ -1,0 +1,78 @@
+diff --git a/lib/matplotlib/pyplot.py b/lib/matplotlib/pyplot.py
+index 9ba243c..30179bc 100644
+--- a/lib/matplotlib/pyplot.py
++++ b/lib/matplotlib/pyplot.py
+@@ -797,39 +797,40 @@ def figure(num=None,  # autoincrement if None, else integer from 1-N
+     else:
+         num = int(num)  # crude validation of num argument
+ 
+-    manager = _pylab_helpers.Gcf.get_fig_manager(num)
+-    if manager is None:
+-        max_open_warning = rcParams['figure.max_open_warning']
+-        if len(allnums) == max_open_warning >= 1:
+-            _api.warn_external(
+-                f"More than {max_open_warning} figures have been opened. "
+-                f"Figures created through the pyplot interface "
+-                f"(`matplotlib.pyplot.figure`) are retained until explicitly "
+-                f"closed and may consume too much memory. (To control this "
+-                f"warning, see the rcParam `figure.max_open_warning`).",
+-                RuntimeWarning)
+-
+-        manager = new_figure_manager(
+-            num, figsize=figsize, dpi=dpi,
+-            facecolor=facecolor, edgecolor=edgecolor, frameon=frameon,
+-            FigureClass=FigureClass, **kwargs)
+-        fig = manager.canvas.figure
+-        if fig_label:
+-            fig.set_label(fig_label)
+-
+-        _pylab_helpers.Gcf._set_new_active_manager(manager)
+-
+-        # make sure backends (inline) that we don't ship that expect this
+-        # to be called in plotting commands to make the figure call show
+-        # still work.  There is probably a better way to do this in the
+-        # FigureManager base class.
+-        draw_if_interactive()
+-
+-        if _REPL_DISPLAYHOOK is _ReplDisplayHook.PLAIN:
+-            fig.stale_callback = _auto_draw_if_interactive
+-
+-    if clear:
+-        manager.canvas.figure.clear()
++    with _api._use_error_msg("Could not create a new figure"):
++        manager = _pylab_helpers.Gcf.get_fig_manager(num)
++        if manager is None:
++            max_open_warning = rcParams['figure.max_open_warning']
++            if len(allnums) == max_open_warning >= 1:
++                _api.warn_external(
++                    f"More than {max_open_warning} figures have been opened. "
++                    f"Figures created through the pyplot interface "
++                    f"(`matplotlib.pyplot.figure`) are retained until explicitly "
++                    f"closed and may consume too much memory. (To control this "
++                    f"warning, see the rcParam `figure.max_open_warning`).",
++                    RuntimeWarning)
++
++            manager = new_figure_manager(
++                num, figsize=figsize, dpi=dpi,
++                facecolor=facecolor, edgecolor=edgecolor, frameon=frameon,
++                FigureClass=FigureClass, **kwargs)
++            fig = manager.canvas.figure
++            if fig_label:
++                fig.set_label(fig_label)
++
++            _pylab_helpers.Gcf._set_new_active_manager(manager)
++
++            # make sure backends (inline) that we don't ship that expect this
++            # to be called in plotting commands to make the figure call show
++            # still work.  There is probably a better way to do this in the
++            # FigureManager base class.
++            draw_if_interactive()
++
++            if _REPL_DISPLAYHOOK is _ReplDisplayHook.PLAIN:
++                fig.stale_callback = _auto_draw_if_interactive
++
++        if clear:
++            manager.canvas.figure.clear()
+ 
+     return manager.canvas.figure
+ 

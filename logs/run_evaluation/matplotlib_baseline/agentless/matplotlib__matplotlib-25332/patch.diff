@@ -1,0 +1,16 @@
+diff --git a/lib/matplotlib/figure.py b/lib/matplotlib/figure.py
+index 973eb1a..8427df5 100644
+--- a/lib/matplotlib/figure.py
++++ b/lib/matplotlib/figure.py
+@@ -3174,6 +3174,11 @@ None}, default: None
+         from matplotlib import _pylab_helpers
+         if self.canvas.manager in _pylab_helpers.Gcf.figs.values():
+             state['_restore_to_pylab'] = True
++        # Remove weak references to avoid pickling issues
++        state['_align_label_groups'] = {
++            k: [ref() for ref in v if ref() is not None]
++            for k, v in state.get('_align_label_groups', {}).items()
++        }
+         return state
+ 
+     def __setstate__(self, state):

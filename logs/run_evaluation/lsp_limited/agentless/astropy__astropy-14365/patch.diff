@@ -1,0 +1,22 @@
+diff --git a/astropy/io/ascii/qdp.py b/astropy/io/ascii/qdp.py
+index 92431f5..368950b 100644
+--- a/astropy/io/ascii/qdp.py
++++ b/astropy/io/ascii/qdp.py
+@@ -60,7 +60,7 @@ def _line_type(line, delimiter=None):
+     ValueError: Unrecognized QDP line...
+     """
+     _decimal_re = r"[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?"
+-    _command_re = r"READ [TS]ERR(\s+[0-9]+)+"
++    _command_re = r"(?i)READ [TS]ERR(\s+[0-9]+)+"
+ 
+     sep = delimiter
+     if delimiter is None:
+@@ -297,7 +297,7 @@ def _get_tables_from_qdp_file(qdp_file, input_colnames=None, delimiter=None):
+                     # This should never happen, but just in case.
+                     if len(command) < 3:
+                         continue
+-                    err_specs[command[1].lower()] = [int(c) for c in command[2:]]
++                    err_specs[command[1].upper()] = [int(c) for c in command[2:]]
+             if colnames is None:
+                 colnames = _interpret_err_lines(err_specs, ncol, names=input_colnames)
+ 

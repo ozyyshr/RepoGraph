@@ -142,7 +142,7 @@ def parse_python_file(file_path, file_content=None):
     """
     if file_content is None:
         try:
-            with open(file_path, "r") as file:
+            with open(file_path, "r", encoding="utf-8") as file:
                 file_content = file.read()
                 parsed_data = ast.parse(file_content)
         except Exception as e:  # Catch all types of exceptions

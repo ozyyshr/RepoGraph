@@ -40,7 +40,7 @@ def check_code_differ_by_just_empty_lines(code, prev_code) -> bool:
 def lint_code(repo_playground, temp_name, code, prev_code="") -> tuple[bool, set, set]:
 
     # Generate a temperary folder and add uuid to avoid collision
-    repo_playground = os.path.join(repo_playground, str(uuid.uuid4()))
+    repo_playground = os.path.join(repo_playground, str(uuid.uuid4())).replace("\\", "/")
 
     # assert playground doesn't exist
     assert not os.path.exists(repo_playground), f"{repo_playground} already exists"
@@ -78,7 +78,8 @@ def lint_code(repo_playground, temp_name, code, prev_code="") -> tuple[bool, set
     s = o.stdout.decode("utf-8")
 
     # remove playground
-    subprocess.run(f"rm -rf {repo_playground}", shell=True)
+    import shutil
+    shutil.rmtree(repo_playground, ignore_errors=True)
 
     errors = set()
     if s != "":
@@ -96,7 +97,7 @@ def fake_git_repo(repo_playground, file_path, old_content, new_content) -> str:
     """create a fake git repo to obtain git diff format"""
 
     # Generate a temperary folder and add uuid to avoid collision
-    repo_playground = os.path.join(repo_playground, str(uuid.uuid4()))
+    repo_playground = os.path.join(repo_playground, str(uuid.uuid4())).replace("\\", "/")
 
     # assert playground doesn't exist
     assert not os.path.exists(repo_playground), f"{repo_playground} already exists"
@@ -108,9 +109,7 @@ def fake_git_repo(repo_playground, file_path, old_content, new_content) -> str:
     subprocess.run(f"cd {repo_playground} && git init", shell=True)
 
     # create a file
-    subprocess.run(
-        f"mkdir -p {repo_playground}/{os.path.dirname(file_path)}", shell=True
-    )
+    os.makedirs(f"{repo_playground}/{os.path.dirname(file_path)}", exist_ok=True)
 
     with open(f"{repo_playground}/{file_path}", "w") as f:
         f.write(old_content)
@@ -133,7 +132,8 @@ def fake_git_repo(repo_playground, file_path, old_content, new_content) -> str:
     s = o.stdout.decode("utf-8")
 
     # remove playground
-    subprocess.run(f"rm -rf {repo_playground}", shell=True)
+    import shutil
+    shutil.rmtree(repo_playground, ignore_errors=True)
 
     return s
 
@@ -142,7 +142,7 @@ def fake_git_apply(repo_playground, file_path, old_content, patch) -> str:
     """create a fake git repo to obtain new file content"""
 
     # Generate a temperary folder and add uuid to avoid collision
-    repo_playground = os.path.join(repo_playground, str(uuid.uuid4()))
+    repo_playground = os.path.join(repo_playground, str(uuid.uuid4())).replace("\\", "/")
 
     # assert playground doesn't exist
     assert not os.path.exists(repo_playground), f"{repo_playground} already exists"
@@ -154,9 +154,7 @@ def fake_git_apply(repo_playground, file_path, old_content, patch) -> str:
     subprocess.run(f"cd {repo_playground} && git init", shell=True)
 
     # create a file
-    subprocess.run(
-        f"mkdir -p {repo_playground}/{os.path.dirname(file_path)}", shell=True
-    )
+    os.makedirs(f"{repo_playground}/{os.path.dirname(file_path)}", exist_ok=True)
 
     with open(f"{repo_playground}/{file_path}", "w") as f:
         f.write(old_content)
@@ -201,7 +199,8 @@ def fake_git_apply(repo_playground, file_path, old_content, patch) -> str:
     s = o.stdout.decode("utf-8")
 
     # remove playground
-    subprocess.run(f"rm -rf {repo_playground}", shell=True)
+    import shutil
+    shutil.rmtree(repo_playground, ignore_errors=True)
 
     return s
 

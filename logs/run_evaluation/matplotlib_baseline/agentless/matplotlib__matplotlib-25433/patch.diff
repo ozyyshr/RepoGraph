@@ -1,0 +1,26 @@
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index f12a9a3..13dd03f 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -600,7 +600,9 @@ class Slider(SliderBase):
+         int
+             Connection id (which can be used to disconnect *func*).
+         """
+-        return self._observers.connect('changed', lambda val: func(val))
++        cid = self._observers.connect('changed', lambda val: func(val))
++        self._observers.process('changed', self.val)  # Ensure the callback is called with the initial value
++        return cid
+ 
+ 
+ class RangeSlider(SliderBase):
+@@ -983,7 +985,9 @@ class RangeSlider(SliderBase):
+         int
+             Connection id (which can be used to disconnect *func*).
+         """
+-        return self._observers.connect('changed', lambda val: func(val))
++        cid = self._observers.connect('changed', lambda val: func(val))
++        self._observers.process('changed', self.val)  # Ensure the callback is called with the initial value
++        return cid
+ 
+ 
+ def _expand_text_props(props):

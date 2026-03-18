@@ -5,6 +5,8 @@ networkx==3.2.1
 pygments==2.18.0
 tqdm
 datasets
-openai==1.42.0
+openai>=1.52.0
 tiktoken==0.7.0
 libcst==1.4.0
+jedi==0.19.2
+flask

@@ -1,0 +1,19 @@
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index d6e9246..cb6f035 100644
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -209,7 +209,7 @@ def _coord_matrix(model, pos, noutp):
+     else:
+         mat = np.zeros((noutp, model.n_inputs))
+ 
+-        for i in range(model.n_inputs):
++        for i in range(model.n_outputs):
+             mat[i, i] = 1
+         if pos == 'right':
+             mat = np.roll(mat, (noutp - model.n_outputs))
+@@ -314,4 +314,4 @@ def _separable(transform):
+ # Maps modeling operators to a function computing and represents the
+ # relationship of axes as an array of 0-es and 1-s
+ _operators = {'&': _cstack, '|': _cdot, '+': _arith_oper, '-': _arith_oper,
+-              '*': _arith_oper, '/': _arith_oper, '**': _arith_oper}
++              '*': _arith_oper, '/': _arith_oper, '**': _arith_oper}

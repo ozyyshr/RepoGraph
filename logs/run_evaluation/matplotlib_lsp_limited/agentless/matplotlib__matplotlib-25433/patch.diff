@@ -1,0 +1,40 @@
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index f12a9a3..2f66e26 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -600,7 +600,9 @@ class Slider(SliderBase):
+         int
+             Connection id (which can be used to disconnect *func*).
+         """
+-        return self._observers.connect('changed', lambda val: func(val))
++        cid = self._observers.connect('changed', lambda val: func(val))
++        self._observers.callbacks[cid].func = func  # Store the original function
++        return cid
+ 
+ 
+ class RangeSlider(SliderBase):
+@@ -966,7 +968,12 @@ class RangeSlider(SliderBase):
+             self.ax.figure.canvas.draw_idle()
+         self.val = (vmin, vmax)
+         if self.eventson:
+-            self._observers.process("changed", (vmin, vmax))
++            # Temporarily disconnect the callback to avoid recursion issues
++            for cid, observer in list(self._observers.callbacks.items()):
++                if observer.func == self._observers.callbacks[cid].func:
++                    self._observers.disconnect(cid)
++                    self._observers.process("changed", (vmin, vmax))
++                    self._observers.connect('changed', observer.func)
+ 
+     def on_changed(self, func):
+         """
+@@ -983,7 +990,9 @@ class RangeSlider(SliderBase):
+         int
+             Connection id (which can be used to disconnect *func*).
+         """
+-        return self._observers.connect('changed', lambda val: func(val))
++        cid = self._observers.connect('changed', lambda val: func(val))
++        self._observers.callbacks[cid].func = func  # Store the original function
++        return cid
+ 
+ 
+ def _expand_text_props(props):

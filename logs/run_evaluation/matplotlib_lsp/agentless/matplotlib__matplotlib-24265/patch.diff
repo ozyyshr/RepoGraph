@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/style/core.py b/lib/matplotlib/style/core.py
+index 6520b77..310cddd 100644
+--- a/lib/matplotlib/style/core.py
++++ b/lib/matplotlib/style/core.py
+@@ -116,7 +116,7 @@ def use(style):
+             if s in [
+                 "seaborn",
+                 "seaborn-bright",
+-                "seaborn-colorblind",
++                "seaborn-v0_8-colorblind",
+                 "seaborn-dark",
+                 "seaborn-darkgrid",
+                 "seaborn-dark-palette",

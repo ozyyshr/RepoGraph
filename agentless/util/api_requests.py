@@ -5,7 +5,13 @@ from typing import Dict, Union
 import openai
 import tiktoken
 
-client = openai.OpenAI()
+_client = None
+
+def _get_client():
+    global _client
+    if _client is None:
+        _client = openai.OpenAI()
+    return _client
 
 
 def num_tokens_from_messages(message, model="gpt-3.5-turbo-0301"):
@@ -57,30 +63,42 @@ def handler(signum, frame):
     raise Exception("end of time")
 
 
+# signal.alarm / SIGALRM are Unix-only; use a no-op on Windows
+_HAS_SIGALRM = hasattr(signal, "SIGALRM")
+
+def _set_alarm(seconds):
+    if _HAS_SIGALRM:
+        signal.signal(signal.SIGALRM, handler)
+        signal.alarm(seconds)
+
+def _cancel_alarm():
+    if _HAS_SIGALRM:
+        signal.alarm(0)
+
+
 def request_chatgpt_engine(config):
     ret = None
     while ret is None:
         try:
-            signal.signal(signal.SIGALRM, handler)
-            signal.alarm(100)
-            ret = client.chat.completions.create(**config)
-            signal.alarm(0)
+            _set_alarm(100)
+            ret = _get_client().chat.completions.create(**config)
+            _cancel_alarm()
         except openai._exceptions.BadRequestError as e:
             print(e)
-            signal.alarm(0)
+            _cancel_alarm()
         except openai._exceptions.RateLimitError as e:
             print("Rate limit exceeded. Waiting...")
             print(e)
-            signal.alarm(0)
+            _cancel_alarm()
             time.sleep(5)
         except openai._exceptions.APIConnectionError as e:
             print("API connection error. Waiting...")
-            signal.alarm(0)
+            _cancel_alarm()
             time.sleep(5)
         except Exception as e:
             print("Unknown error. Waiting...")
             print(e)
-            signal.alarm(0)
+            _cancel_alarm()
             time.sleep(1)
     return ret
 
@@ -120,13 +138,12 @@ def request_anthropic_engine(client, config):
     ret = None
     while ret is None:
         try:
-            signal.signal(signal.SIGALRM, handler)
-            signal.alarm(100)
-            ret = client.messages.create(**config)
-            signal.alarm(0)
+            _set_alarm(100)
+            ret = _get_client().messages.create(**config)
+            _cancel_alarm()
         except Exception as e:
             print("Unknown error. Waiting...")
             print(e)
-            signal.alarm(0)
+            _cancel_alarm()
             time.sleep(10)
     return ret

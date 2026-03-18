@@ -1,0 +1,25 @@
+diff --git a/lib/matplotlib/__init__.py b/lib/matplotlib/__init__.py
+index 320d1a7..73422db 100644
+--- a/lib/matplotlib/__init__.py
++++ b/lib/matplotlib/__init__.py
+@@ -131,7 +131,7 @@ __bibtex__ = r"""@Article{Hunter:2007,
+ 
+ 
+ def __getattr__(name):
+-    if name == "__version__":
++    if name in {"__version__", "version_info"}:
+         import setuptools_scm
+         global __version__  # cache it.
+         # Only shell out to a git subprocess if really needed, and not on a
+@@ -147,7 +147,10 @@ def __getattr__(name):
+             )
+         else:  # Get the version from the _version.py setuptools_scm file.
+             __version__ = _version.version
+-        return __version__
++        if name == "__version__":
++            return __version__
++        elif name == "version_info":
++            return tuple(map(int, __version__.split(".")[:3]))
+     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+ 
+ 

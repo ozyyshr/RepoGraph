@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/figure.py b/lib/matplotlib/figure.py
+index 973eb1a..85080e5 100644
+--- a/lib/matplotlib/figure.py
++++ b/lib/matplotlib/figure.py
+@@ -3174,6 +3174,8 @@ None}, default: None
+         from matplotlib import _pylab_helpers
+         if self.canvas.manager in _pylab_helpers.Gcf.figs.values():
+             state['_restore_to_pylab'] = True
++        # Remove weak references from the state
++        state = {k: v for k, v in state.items() if not isinstance(v, weakref.ReferenceType)}
+         return state
+ 
+     def __setstate__(self, state):

@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/figure.py b/lib/matplotlib/figure.py
+index 71845c8..ad4eb4c 100644
+--- a/lib/matplotlib/figure.py
++++ b/lib/matplotlib/figure.py
+@@ -2557,7 +2557,7 @@ class Figure(FigureBase):
+             else:
+                 self._layout_engine = None
+                 return
+-        if layout == 'tight':
++        if layout == 'tight' and not isinstance(self._layout_engine, ConstrainedLayoutEngine):
+             new_layout_engine = TightLayoutEngine(**kwargs)
+         elif layout == 'constrained':
+             new_layout_engine = ConstrainedLayoutEngine(**kwargs)

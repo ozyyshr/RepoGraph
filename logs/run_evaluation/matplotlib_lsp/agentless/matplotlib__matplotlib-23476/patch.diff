@@ -1,0 +1,14 @@
+diff --git a/lib/matplotlib/figure.py b/lib/matplotlib/figure.py
+index cd28277..c2d70b6 100644
+--- a/lib/matplotlib/figure.py
++++ b/lib/matplotlib/figure.py
+@@ -3044,7 +3044,9 @@ class Figure(FigureBase):
+         self.__dict__ = state
+ 
+         # re-initialise some of the unstored state information
++        dpi = self.dpi  # Save the current DPI
+         FigureCanvasBase(self)  # Set self.canvas.
++        self.dpi = dpi  # Restore the saved DPI
+ 
+         if restore_to_pylab:
+             # lazy import to avoid circularity

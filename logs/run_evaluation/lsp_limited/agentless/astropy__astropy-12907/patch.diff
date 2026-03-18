@@ -1,0 +1,42 @@
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index d6e9246..9d2a1a0 100644
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -199,20 +199,25 @@ def _coord_matrix(model, pos, noutp):
+         else:
+             mat[-model.n_outputs:, -model.n_inputs:] = m
+         return mat
+-    if not model.separable:
+-        # this does not work for more than 2 coordinates
+-        mat = np.zeros((noutp, model.n_inputs))
+-        if pos == 'left':
+-            mat[:model.n_outputs, : model.n_inputs] = 1
+-        else:
+-            mat[-model.n_outputs:, -model.n_inputs:] = 1
++    if isinstance(model, CompoundModel):
++        left_matrix = _coord_matrix(model.left, pos, noutp)
++        right_matrix = _coord_matrix(model.right, pos, noutp)
++        mat = _operators[model.op](left_matrix, right_matrix)
+     else:
+-        mat = np.zeros((noutp, model.n_inputs))
++        if not model.separable:
++            # this does not work for more than 2 coordinates
++            mat = np.zeros((noutp, model.n_inputs))
++            if pos == 'left':
++                mat[:model.n_outputs, : model.n_inputs] = 1
++            else:
++                mat[-model.n_outputs:, -model.n_inputs:] = 1
++        else:
++            mat = np.zeros((noutp, model.n_inputs))
+ 
+-        for i in range(model.n_inputs):
+-            mat[i, i] = 1
+-        if pos == 'right':
+-            mat = np.roll(mat, (noutp - model.n_outputs))
++            for i in range(model.n_inputs):
++                mat[i, i] = 1
++            if pos == 'right':
++                mat = np.roll(mat, (noutp - model.n_outputs))
+     return mat
+ 
+ 

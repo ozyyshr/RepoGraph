@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/colors.py b/lib/matplotlib/colors.py
+index 61200b4..80865cb 100644
+--- a/lib/matplotlib/colors.py
++++ b/lib/matplotlib/colors.py
+@@ -1354,6 +1354,8 @@ class Normalize:
+         (vmin,), _ = self.process_value(self.vmin)
+         (vmax,), _ = self.process_value(self.vmax)
+ 
++        if vmin == vmax:
++            raise ValueError("vmin and vmax must be different to compute the inverse.")
+         if np.iterable(value):
+             val = np.ma.asarray(value)
+             return vmin + val * (vmax - vmin)

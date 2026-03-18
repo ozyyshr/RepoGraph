@@ -1,0 +1,25 @@
+diff --git a/lib/matplotlib/pyplot.py b/lib/matplotlib/pyplot.py
+index 9ba243c..339fc0f 100644
+--- a/lib/matplotlib/pyplot.py
++++ b/lib/matplotlib/pyplot.py
+@@ -588,7 +588,19 @@ def rc(group, **kwargs):
+ 
+ @_copy_docstring_and_deprecators(matplotlib.rc_context)
+ def rc_context(rc=None, fname=None):
+-    return matplotlib.rc_context(rc, fname)
++    from matplotlib import _pylab_helpers
++    figs_before = list(_pylab_helpers.Gcf.figs.items())
++    context = matplotlib.rc_context(rc, fname)
++    try:
++        yield context
++    finally:
++        figs_after = list(_pylab_helpers.Gcf.figs.items())
++        for num, manager in figs_before:
++            if num not in _pylab_helpers.Gcf.figs:
++                _pylab_helpers.Gcf.figs[num] = manager
++        for num, manager in figs_after:
++            if num not in _pylab_helpers.Gcf.figs:
++                _pylab_helpers.Gcf.figs[num] = manager
+ 
+ 
+ @_copy_docstring_and_deprecators(matplotlib.rcdefaults)

@@ -1,0 +1,14 @@
+diff --git a/lib/matplotlib/figure.py b/lib/matplotlib/figure.py
+index cd28277..06fd493 100644
+--- a/lib/matplotlib/figure.py
++++ b/lib/matplotlib/figure.py
+@@ -3041,7 +3041,9 @@ class Figure(FigureBase):
+                 f"This figure was saved with matplotlib version {version} and "
+                 f"is unlikely to function correctly.")
+ 
++        dpi = state.get('dpi', self.dpi)
+         self.__dict__ = state
++        self.dpi = dpi
+ 
+         # re-initialise some of the unstored state information
+         FigureCanvasBase(self)  # Set self.canvas.

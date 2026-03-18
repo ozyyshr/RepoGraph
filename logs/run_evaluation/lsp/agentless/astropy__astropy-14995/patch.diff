@@ -1,0 +1,64 @@
+diff --git a/astropy/nddata/mixins/ndarithmetic.py b/astropy/nddata/mixins/ndarithmetic.py
+index fbb2aba..6635980 100644
+--- a/astropy/nddata/mixins/ndarithmetic.py
++++ b/astropy/nddata/mixins/ndarithmetic.py
+@@ -254,7 +254,10 @@ class NDArithmeticMixin:
+                 kwargs["wcs"] = deepcopy(operand.wcs)
+             else:
+                 kwargs["wcs"] = deepcopy(self.wcs)
+-        else:
++        elif self.mask is None:
++            kwargs["mask"] = deepcopy(operand.mask)
++        elif operand.mask is None:
++            kwargs["mask"] = deepcopy(self.mask)
+             kwargs["wcs"] = self._arithmetic_wcs(
+                 operation, operand, compare_wcs, **kwds2["wcs"]
+             )
+@@ -284,7 +287,10 @@ class NDArithmeticMixin:
+                 result = np.ma.masked_array(
+                     result, mask=np.zeros_like(result, dtype=bool)
+                 )
+-        else:
++        elif self.mask is None:
++            kwargs["mask"] = deepcopy(operand.mask)
++        elif operand.mask is None:
++            kwargs["mask"] = deepcopy(self.mask)
+             # Then calculate the resulting data (which can but needs not be a
+             # quantity)
+             result = self._arithmetic_data(
+@@ -303,7 +309,10 @@ class NDArithmeticMixin:
+                 kwargs["uncertainty"] = deepcopy(operand.uncertainty)
+             else:
+                 kwargs["uncertainty"] = deepcopy(self.uncertainty)
+-        else:
++        elif self.mask is None:
++            kwargs["mask"] = deepcopy(operand.mask)
++        elif operand.mask is None:
++            kwargs["mask"] = deepcopy(self.mask)
+             kwargs["uncertainty"] = self._arithmetic_uncertainty(
+                 operation,
+                 operand,
+@@ -331,7 +340,10 @@ class NDArithmeticMixin:
+                 kwargs["mask"] = deepcopy(operand.mask)
+             else:
+                 kwargs["mask"] = deepcopy(self.mask)
+-        else:
++        elif self.mask is None:
++            kwargs["mask"] = deepcopy(operand.mask)
++        elif operand.mask is None:
++            kwargs["mask"] = deepcopy(self.mask)
+             kwargs["mask"] = self._arithmetic_mask(
+                 operation, operand, handle_mask, axis=axis, **kwds2["mask"]
+             )
+@@ -343,7 +355,10 @@ class NDArithmeticMixin:
+                 kwargs["meta"] = deepcopy(operand.meta)
+             else:
+                 kwargs["meta"] = deepcopy(self.meta)
+-        else:
++        elif self.mask is None:
++            kwargs["mask"] = deepcopy(operand.mask)
++        elif operand.mask is None:
++            kwargs["mask"] = deepcopy(self.mask)
+             kwargs["meta"] = self._arithmetic_meta(
+                 operation, operand, handle_meta, **kwds2["meta"]
+             )

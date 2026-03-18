@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/axis.py b/lib/matplotlib/axis.py
+index d63d9ca..c6b2ade 100644
+--- a/lib/matplotlib/axis.py
++++ b/lib/matplotlib/axis.py
+@@ -2021,6 +2021,8 @@ class Axis(martist.Artist):
+         other limits, you should set the limits explicitly after setting the
+         ticks.
+         """
++        if kwargs:
++            _api.check_in_list([k for k in kwargs], **{k: None for k in kwargs})
+         result = self._set_tick_locations(ticks, minor=minor)
+         if labels is not None:
+             self.set_ticklabels(labels, minor=minor, **kwargs)

@@ -1,0 +1,15 @@
+diff --git a/lib/matplotlib/__init__.py b/lib/matplotlib/__init__.py
+index 320d1a7..59f496c 100644
+--- a/lib/matplotlib/__init__.py
++++ b/lib/matplotlib/__init__.py
+@@ -148,6 +148,10 @@ def __getattr__(name):
+         else:  # Get the version from the _version.py setuptools_scm file.
+             __version__ = _version.version
+         return __version__
++    if name == "version_info":
++        version_parts = __version__.split('.')
++        version_info = tuple(map(int, version_parts))
++        return version_info
+     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+ 
+ 

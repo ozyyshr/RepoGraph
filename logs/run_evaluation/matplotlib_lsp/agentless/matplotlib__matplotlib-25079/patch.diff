@@ -1,0 +1,15 @@
+diff --git a/lib/matplotlib/cm.py b/lib/matplotlib/cm.py
+index 06f543d..42f84de 100644
+--- a/lib/matplotlib/cm.py
++++ b/lib/matplotlib/cm.py
+@@ -616,6 +616,10 @@ class ScalarMappable:
+         self._norm = norm
+         self._id_norm = self.norm.callbacks.connect('changed',
+                                                     self.changed)
++        self._norm = norm
++        self._id_norm = self.norm.callbacks.connect('changed',
++                                                    self.changed)
++        self.set_clim(self.norm.vmin, self.norm.vmax)
+         if not in_init:
+             self.changed()
+ 

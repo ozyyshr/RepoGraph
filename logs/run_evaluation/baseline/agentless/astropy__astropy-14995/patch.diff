@@ -1,0 +1,22 @@
+diff --git a/astropy/nddata/mixins/ndarithmetic.py b/astropy/nddata/mixins/ndarithmetic.py
+index fbb2aba..98f1738 100644
+--- a/astropy/nddata/mixins/ndarithmetic.py
++++ b/astropy/nddata/mixins/ndarithmetic.py
+@@ -332,9 +332,14 @@ class NDArithmeticMixin:
+             else:
+                 kwargs["mask"] = deepcopy(self.mask)
+         else:
+-            kwargs["mask"] = self._arithmetic_mask(
+-                operation, operand, handle_mask, axis=axis, **kwds2["mask"]
+-            )
++            if self.mask is None:
++                kwargs["mask"] = deepcopy(operand.mask)
++            elif operand.mask is None:
++                kwargs["mask"] = deepcopy(self.mask)
++            else:
++                kwargs["mask"] = self._arithmetic_mask(
++                    operation, operand, handle_mask, axis=axis, **kwds2["mask"]
++                )
+ 
+         if handle_meta is None:
+             kwargs["meta"] = None
